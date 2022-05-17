@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\City>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Country>
  */
-class CityFactory extends Factory
+class CountryFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -16,8 +16,11 @@ class CityFactory extends Factory
      */
     public function definition()
     {
+        $name = $this->faker->unique()->country();
+
         return [
-            'name' => $this->faker->city(),
+            'name' => $name,
+            'full_name' => $name,
         ];
     }
 }

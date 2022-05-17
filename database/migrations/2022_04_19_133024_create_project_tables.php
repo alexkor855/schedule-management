@@ -21,19 +21,24 @@ return new class extends Migration
             $table->string('full_name');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique('name', 'deleted_at');
         });
 
         Schema::create('cities', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('country_id')->constrained('countries');
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['country_id', 'name', 'deleted_at']);
         });
 
         Schema::create('companies', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('country_id')->constrained('countries');
-            $table->enum('work_scheme', [1, 2, 3, 4, 5, 6]);
+            $table->enum('appointment_scheme', [1, 2, 3, 4, 5, 6]); // see AppointmentSchemeEnum
             $table->string('name');
             $table->string('full_name');
             $table->string('description');
@@ -41,13 +46,15 @@ return new class extends Migration
             $table->string('logotype')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['country_id', 'name', 'deleted_at']);
         });
 
         Schema::create('branches', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('company_id')->constrained('companies');
             $table->foreignUuid('city_id')->constrained('cities');
-            $table->enum('work_scheme', [1, 2, 3, 4, 5, 6]);
+            $table->enum('appointment_scheme', [1, 2, 3, 4, 5, 6]); // see AppointmentSchemeEnum
             $table->string('name');
             $table->string('full_name');
             $table->string('description');
@@ -79,6 +86,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            $table->unique(['company_id', 'name', 'deleted_at']);
             $table->index('company_id');
         });
 
@@ -101,6 +109,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            $table->unique(['branch_id', 'name', 'deleted_at']);
             $table->index('branch_id');
         });
 
@@ -110,6 +119,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('middle_name')->nullable();
+            $table->enum('gender', ['male', 'female']);
             $table->string('photo')->nullable();
             $table->string('description');
             $table->string('full_description', '')->nullable();
@@ -127,46 +137,50 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('middle_name')->nullable();
+            $table->enum('gender', ['male', 'female']);
             $table->timestamps();
             $table->softDeletes();
 
+            $table->unique(['company_id', 'mobile_number', 'deleted_at']);
+            $table->unique(['company_id', 'email', 'deleted_at']);
             $table->index('company_id');
         });
 
         Schema::create('branch_employees', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->foreignUuid('branch_id')->constrained('branches');
             $table->foreignUuid('employee_id')->constrained('employees');
             $table->timestamps();
 
-            $table->primary(['branch_id', 'employee_id']);
-
+            $table->unique(['branch_id', 'employee_id']);
             $table->index('branch_id');
         });
 
         Schema::create('branch_services', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->foreignUuid('branch_id')->constrained('branches');
             $table->foreignUuid('service_id')->constrained('services');
             $table->timestamps();
 
-            $table->primary(['branch_id', 'service_id']);
-
+            $table->unique(['branch_id', 'service_id']);
             $table->index('branch_id');
         });
 
         Schema::create('service_employees', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->foreignUuid('branch_id')->constrained('branches');
             $table->foreignUuid('service_id')->constrained('services');
             $table->foreignUuid('employee_id')->constrained('employees');
             $table->unsignedSmallInteger('priority_level')->nullable();
             $table->timestamps();
 
-            $table->primary(['branch_id', 'service_id', 'employee_id']);
-
+            $table->unique(['branch_id', 'service_id', 'employee_id']);
             $table->index('service_id');
             $table->index('employee_id');
         });
 
         Schema::create('service_workplaces', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->foreignUuid('branch_id')->constrained('branches');
             $table->foreignUuid('service_id')->constrained('services');
             $table->foreignUuid('workplace_id')->constrained('workplaces');
@@ -175,25 +189,25 @@ return new class extends Migration
                 ->comment('Priority of assigning an employee providing a service');
             $table->timestamps();
 
-            $table->primary(['branch_id', 'service_id', 'workplace_id']);
-
+            $table->unique(['branch_id', 'service_id', 'workplace_id']);
             $table->index('service_id');
             $table->index('workplace_id');
         });
 
         Schema::create('schedules', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->enum('schedule_type', [1, 2, 3, 4, 5, 6]);
+            $table->enum('schedule_type', [1, 2, 3, 4]); // see ScheduleTypeEnum
             $table->foreignUuid('branch_id')->constrained('branches');
-            $table->foreignUuid('workplace_id')->constrained('workplaces');
-            $table->foreignUuid('employee_id')->constrained('employees');
-            $table->enum('time_step', [1, 5, 10, 15, 30, 60])
+            $table->foreignUuid('employee_id')->nullable()->constrained('employees');
+            $table->foreignUuid('workplace_id')->nullable()->constrained('workplaces');
+            $table->enum('time_step', [1, 5, 10, 15, 20, 30, 60]) // see TimeStepEnum
                 ->comment('Time step in minutes');
             $table->unsignedSmallInteger('number_available_days')
                 ->comment('Number of days available for appointment from the current date');
             $table->timestamps();
             $table->softDeletes();
 
+            $table->unique(['branch_id', 'employee_id', 'workplace_id', 'deleted_at']);
             $table->index('workplace_id');
             $table->index('employee_id');
         });
@@ -204,6 +218,8 @@ return new class extends Migration
             $table->time('end_time');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['start_time', 'end_time', 'deleted_at']);
         });
 
         Schema::create('schedule_work_days', function (Blueprint $table) {
@@ -214,6 +230,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            $table->unique(['schedule_id', 'interval_id', 'date', 'deleted_at']);
             $table->index('schedule_id');
         });
     }
@@ -225,16 +242,17 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('schedule_work_days');
-        Schema::dropIfExists('schedule_day_intervals');
-        Schema::dropIfExists('schedules');
         Schema::dropIfExists('service_workplaces');
         Schema::dropIfExists('service_employees');
         Schema::dropIfExists('branch_services');
         Schema::dropIfExists('branch_employees');
+
+        Schema::dropIfExists('schedule_work_days');
+        Schema::dropIfExists('schedule_day_intervals');
+        Schema::dropIfExists('schedules');
         Schema::dropIfExists('customer');
         Schema::dropIfExists('employees');
-        Schema::dropIfExists('workplace');
+        Schema::dropIfExists('workplaces');
         Schema::dropIfExists('services');
         Schema::dropIfExists('branches');
         Schema::dropIfExists('companies');

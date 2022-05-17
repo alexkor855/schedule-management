@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class BranchService extends Model
 {
-    use HasFactory;
+    use HasFactory, Uuids;
 }

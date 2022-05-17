@@ -3,11 +3,12 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Carbon\Carbon;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\City>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ScheduleWorkDay>
  */
-class CityFactory extends Factory
+class ScheduleWorkDayFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +18,7 @@ class CityFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->city(),
+            'date' => Carbon::now()->format('Y-m-d'),
         ];
     }
 }

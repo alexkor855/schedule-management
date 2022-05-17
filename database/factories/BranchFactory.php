@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Enums\AppointmentSchemeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -14,10 +15,17 @@ class BranchFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition()
+    public function definition(): array
     {
+        $name = '№ ' . $this->faker->numberBetween(100, 5000);
+
         return [
-            //
+            'appointment_scheme' => $this->faker->randomElements(AppointmentSchemeEnum::values())[0],
+            'name' => $name,
+            'full_name' => $this->faker->text(20),
+            'description' => $this->faker->text(20),
+            'full_description' => $this->faker->text(),
+            'address' => $this->faker->address(),
         ];
     }
 }

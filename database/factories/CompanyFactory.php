@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Enums\AppointmentSchemeEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,15 @@ class CompanyFactory extends Factory
      */
     public function definition()
     {
+        $name = $this->faker->company();
+
         return [
-            //
+            'appointment_scheme' => $this->faker->randomElements(AppointmentSchemeEnum::values())[0],
+            'name' => $name,
+            'full_name' => $name,
+            'description' => $this->faker->text(20),
+            'full_description' => $this->faker->text(),
+            'logotype' => $this->faker->imageUrl(640, 480, $name, true),
         ];
     }
 }
