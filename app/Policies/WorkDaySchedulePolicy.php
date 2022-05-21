@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\ScheduleWorkDay;
+use App\Models\WorkDaySchedule;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ScheduleWorkDayPolicy
+class WorkDaySchedulePolicy
 {
     use HandlesAuthorization;
 
@@ -25,10 +25,10 @@ class ScheduleWorkDayPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleWorkDay  $scheduleWorkDay
+     * @param  \App\Models\WorkDaySchedule  $scheduleWorkDay
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, ScheduleWorkDay $scheduleWorkDay)
+    public function view(User $user, WorkDaySchedule $scheduleWorkDay)
     {
         //
     }
@@ -48,10 +48,10 @@ class ScheduleWorkDayPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleWorkDay  $scheduleWorkDay
+     * @param  \App\Models\WorkDaySchedule  $scheduleWorkDay
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, ScheduleWorkDay $scheduleWorkDay)
+    public function update(User $user, WorkDaySchedule $scheduleWorkDay)
     {
         //
     }
@@ -60,10 +60,10 @@ class ScheduleWorkDayPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleWorkDay  $scheduleWorkDay
+     * @param  \App\Models\WorkDaySchedule  $scheduleWorkDay
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, ScheduleWorkDay $scheduleWorkDay)
+    public function delete(User $user, WorkDaySchedule $scheduleWorkDay)
     {
         //
     }
@@ -72,10 +72,10 @@ class ScheduleWorkDayPolicy
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleWorkDay  $scheduleWorkDay
+     * @param  \App\Models\WorkDaySchedule  $scheduleWorkDay
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, ScheduleWorkDay $scheduleWorkDay)
+    public function restore(User $user, WorkDaySchedule $scheduleWorkDay)
     {
         //
     }
@@ -84,10 +84,10 @@ class ScheduleWorkDayPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\ScheduleWorkDay  $scheduleWorkDay
+     * @param  \App\Models\WorkDaySchedule  $scheduleWorkDay
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, ScheduleWorkDay $scheduleWorkDay)
+    public function forceDelete(User $user, WorkDaySchedule $scheduleWorkDay)
     {
         //
     }

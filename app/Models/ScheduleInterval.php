@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ScheduleWorkDay extends Model
+class ScheduleInterval extends Model
 {
     use HasFactory, Uuids, SoftDeletes;
 }

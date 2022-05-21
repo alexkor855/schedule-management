@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ScheduleWorkDay>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\WorkDaySchedule>
  */
-class ScheduleWorkDayFactory extends Factory
+class WorkDayScheduleFactory extends Factory
 {
     /**
      * Define the model's default state.

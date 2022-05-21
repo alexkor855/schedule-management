@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreScheduleWorkDayRequest;
-use App\Http\Requests\UpdateScheduleWorkDayRequest;
-use App\Models\ScheduleWorkDay;
+use App\Http\Requests\StoreWorkDayScheduleRequest;
+use App\Http\Requests\UpdateWorkDayScheduleRequest;
+use App\Models\WorkDaySchedule;
 
-class ScheduleWorkDayController extends Controller
+class WorkDayScheduleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -31,10 +31,10 @@ class ScheduleWorkDayController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreScheduleWorkDayRequest  $request
+     * @param  \App\Http\Requests\StoreWorkDayScheduleRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreScheduleWorkDayRequest $request)
+    public function store(StoreWorkDayScheduleRequest $request)
     {
         //
     }
@@ -42,10 +42,10 @@ class ScheduleWorkDayController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\ScheduleWorkDay  $scheduleWorkDay
+     * @param  \App\Models\WorkDaySchedule  $scheduleWorkDay
      * @return \Illuminate\Http\Response
      */
-    public function show(ScheduleWorkDay $scheduleWorkDay)
+    public function show(WorkDaySchedule $scheduleWorkDay)
     {
         //
     }
@@ -53,10 +53,10 @@ class ScheduleWorkDayController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\ScheduleWorkDay  $scheduleWorkDay
+     * @param  \App\Models\WorkDaySchedule  $scheduleWorkDay
      * @return \Illuminate\Http\Response
      */
-    public function edit(ScheduleWorkDay $scheduleWorkDay)
+    public function edit(WorkDaySchedule $scheduleWorkDay)
     {
         //
     }
@@ -64,11 +64,11 @@ class ScheduleWorkDayController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateScheduleWorkDayRequest  $request
-     * @param  \App\Models\ScheduleWorkDay  $scheduleWorkDay
+     * @param  \App\Http\Requests\UpdateWorkDayScheduleRequest  $request
+     * @param  \App\Models\WorkDaySchedule  $scheduleWorkDay
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateScheduleWorkDayRequest $request, ScheduleWorkDay $scheduleWorkDay)
+    public function update(UpdateWorkDayScheduleRequest $request, WorkDaySchedule $scheduleWorkDay)
     {
         //
     }
@@ -76,10 +76,10 @@ class ScheduleWorkDayController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\ScheduleWorkDay  $scheduleWorkDay
+     * @param  \App\Models\WorkDaySchedule  $scheduleWorkDay
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ScheduleWorkDay $scheduleWorkDay)
+    public function destroy(WorkDaySchedule $scheduleWorkDay)
     {
         //
     }
