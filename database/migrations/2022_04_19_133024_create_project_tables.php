@@ -202,7 +202,7 @@ return new class extends Migration
             $table->foreignUuid('workplace_id')->nullable()->constrained('workplaces');
             $table->enum('time_step', [1, 5, 10, 15, 20, 30, 60]) // see TimeStepEnum
                 ->comment('Time step in minutes');
-            $table->unsignedSmallInteger('number_available_days')
+            $table->unsignedSmallInteger('number_available_days')->nullable()
                 ->comment('Number of days available for appointment from the current date');
             $table->timestamps();
             $table->softDeletes();
