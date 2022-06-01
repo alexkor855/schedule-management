@@ -6,7 +6,7 @@ use App\Http\Requests\CopyWorkDayScheduleRequest;
 use App\Http\Requests\StoreWorkDayScheduleRequest;
 use App\Http\Requests\UpdateWorkDayScheduleRequest;
 use App\Models\Schedule;
-use App\Models\ScheduleInterval;
+use App\Models\Interval;
 use App\Models\WorkDaySchedule;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -21,7 +21,7 @@ class WorkDayScheduleService
     public function create(StoreWorkDayScheduleRequest $request): Schedule
     {
         $intervalData = $request->validated('interval');
-        $interval = ScheduleInterval::query()->firstOrCreate($intervalData);
+        $interval = Interval::query()->firstOrCreate($intervalData);
 
         $data = $request->validated();
         if (is_null($data['interval_id'])) {
@@ -42,7 +42,7 @@ class WorkDayScheduleService
     public function update(UpdateWorkDayScheduleRequest $request): Schedule
     {
         $intervalData = $request->validated('interval');
-        $interval = ScheduleInterval::query()->firstOrCreate($intervalData);
+        $interval = Interval::query()->firstOrCreate($intervalData);
 
         $data = $request->validated();
         $schedule = Schedule::query()->find($data['id']);

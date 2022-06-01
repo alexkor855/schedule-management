@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Branch;
-use App\Models\ScheduleInterval;
+use App\Models\Interval;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -39,7 +39,7 @@ class CopyWorkDayScheduleRequest extends FormRequest
                     return $query->whereIn('branch_id', $branchesIds);
                 })
             ],
-            'workDaySchedules.*.interval_id' => ['required', 'exists:schedule_intervals,id'],
+            'workDaySchedules.*.interval_id' => ['required', 'exists:intervals,id'],
         ];
     }
 }

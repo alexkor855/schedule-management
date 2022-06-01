@@ -66,7 +66,7 @@ class UpdateWorkDayScheduleRequest extends FormRequest
             'interval.id' => [
                 'nullable',
                 'uuid',
-                Rule::exists('schedule_intervals', 'id')->where(function (Builder $query) {
+                Rule::exists('intervals', 'id')->where(function (Builder $query) {
                     $query->where('start_time', $this->input('start_time'));
                     $query->where('end_time', $this->input('end_time'));
                 })

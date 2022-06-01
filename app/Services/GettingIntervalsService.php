@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\ScheduleInterval;
+use App\Models\Interval;
 use Illuminate\Database\Eloquent\Collection;
 
-class GettingScheduleIntervalsService
+class GettingIntervalsService
 {
     /**
      * Gets intervals by requested ids
@@ -15,7 +15,7 @@ class GettingScheduleIntervalsService
      */
     public function getIntervalsByIds(array $intervalIds): Collection
     {
-        return ScheduleInterval::query()
+        return Interval::query()
             ->select(['id', 'start_time', 'end_time'])
             ->whereIn('id', $intervalIds)
             ->get();

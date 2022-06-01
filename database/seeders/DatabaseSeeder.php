@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ServiceEmployeeSeeder::class);
         $this->call(ServiceWorkplaceSeeder::class);
 
-        $this->call(ScheduleIntervalSeeder::class);
+        $this->call(IntervalSeeder::class);
         $this->call(ScheduleSeeder::class);
         $this->call(WorkDayScheduleSeeder::class);
     }

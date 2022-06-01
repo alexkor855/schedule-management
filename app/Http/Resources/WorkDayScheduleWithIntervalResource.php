@@ -26,7 +26,7 @@ class WorkDayScheduleWithIntervalResource extends JsonResource
             'schedule_id' => $this->schedule_id,
             'date' => $this->date,
             'interval_id' => $this->interval_id,
-            'interval' => ScheduleIntervalResource::make($this->interval)->toArray($request),
+            'interval' => IntervalResource::make($this->interval)->toArray($request),
         ];
     }
 }

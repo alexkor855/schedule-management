@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ScheduleIntervalResource extends JsonResource
+class IntervalResource extends JsonResource
 {
     /**
      * Indicates if the resource's collection keys should be preserved.

@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Schedule;
-use App\Models\ScheduleInterval;
+use App\Models\Interval;
 use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -23,7 +23,7 @@ class WorkDayScheduleSeeder extends Seeder
             ->select(['id', 'number_available_days'])
             ->get();
 
-        $interval = ScheduleInterval::query()->first();
+        $interval = Interval::query()->first();
 
         $days = [];
         foreach (range(1, 30) as $dayNumber) {

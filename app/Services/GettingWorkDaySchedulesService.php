@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Http\Resources\ScheduleIntervalResource;
+use App\Http\Resources\IntervalResource;
 use App\Http\Resources\WorkDayScheduleResource;
 use App\Models\WorkDaySchedule;
 use Illuminate\Database\Eloquent\Collection;
@@ -11,14 +11,14 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class GettingWorkDaySchedulesService
 {
-    private GettingScheduleIntervalsService $gettingScheduleIntervalsService;
+    private GettingIntervalsService $gettingIntervalsService;
 
     /**
-     * @param GettingScheduleIntervalsService $gettingScheduleIntervalsService
+     * @param GettingIntervalsService $gettingIntervalsService
      */
-    public function __construct(GettingScheduleIntervalsService $gettingScheduleIntervalsService)
+    public function __construct(GettingIntervalsService $gettingIntervalsService)
     {
-        $this->gettingScheduleIntervalsService = $gettingScheduleIntervalsService;
+        $this->gettingIntervalsService = $gettingIntervalsService;
     }
 
     /**
@@ -39,11 +39,11 @@ class GettingWorkDaySchedulesService
         $workDaySchedules = $this->getByIdsAndDate($scheduleIds, $startDate, $endDate);
 
         $intervalIds = $workDaySchedules->pluck('interval_id')->all();
-        $intervals = $this->gettingScheduleIntervalsService->getIntervalsByIds($intervalIds);
+        $intervals = $this->gettingIntervalsService->getIntervalsByIds($intervalIds);
 
         return [
             'work_day_schedules' => WorkDayScheduleResource::collection($workDaySchedules)->toArray(new Request()),
-            'intervals' => ScheduleIntervalResource::collection($intervals->keyBy('id'))->toArray(new Request()),
+            'intervals' => IntervalResource::collection($intervals->keyBy('id'))->toArray(new Request()),
         ];
     }
 
