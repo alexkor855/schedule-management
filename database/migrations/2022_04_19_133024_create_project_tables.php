@@ -222,7 +222,7 @@ return new class extends Migration
             $table->unique(['start_time', 'end_time', 'deleted_at']);
         });
 
-        Schema::create('work_day_schedules', function (Blueprint $table) {
+        Schema::create('schedule_intervals', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('schedule_id')->constrained('schedules');
             $table->foreignUuid('interval_id')->constrained('intervals');
@@ -247,7 +247,7 @@ return new class extends Migration
         Schema::dropIfExists('branch_services');
         Schema::dropIfExists('branch_employees');
 
-        Schema::dropIfExists('work_day_schedules');
+        Schema::dropIfExists('schedule_intervals');
         Schema::dropIfExists('intervals');
         Schema::dropIfExists('schedules');
         Schema::dropIfExists('customer');

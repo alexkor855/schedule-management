@@ -35,7 +35,7 @@ class ScheduleService
         $schedule = Schedule::query()->findOrFail($scheduleId);
 
         DB::transaction(function () use ($schedule) {
-            $schedule->workDaySchedules()->delete();
+            $schedule->scheduleIntervals()->delete();
             return $schedule->delete();
         });
 

@@ -3,12 +3,12 @@
 namespace App\Http\Requests;
 
 use App\Models\Branch;
-use App\Models\Interval;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class CopyWorkDayScheduleRequest extends FormRequest
+class DeleteScheduleIntervalsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -30,16 +30,16 @@ class CopyWorkDayScheduleRequest extends FormRequest
         $branchesIds = Branch::query()->select('id')->get()->modelKeys();
 
         return [
-            'from_date' => ['required', 'date', 'date_format:Y-m-d'],
-            'to_dates.*' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:'.Carbon::today()->format('Y-m-d')],
-            'workDaySchedules.*.schedule_id' => [
+            'schedule_interval_ids.*' => [
                 'required',
                 'uuid',
-                Rule::exists('schedules', 'id')->where(function ($query) use ($branchesIds) {
-                    return $query->whereIn('branch_id', $branchesIds);
+                Rule::exists('schedule_intervals', 'id')->where(function (Builder $query) use ($branchesIds) {
+                    $query->where('date', '>=', Carbon::today()->format('Y-m-d'));
+                    $query->whereHas('schedule', function ($query) use ($branchesIds) {
+                        $query->whereIn('branch_id', $branchesIds);
+                    });
                 })
             ],
-            'workDaySchedules.*.interval_id' => ['required', 'exists:intervals,id'],
         ];
     }
 }

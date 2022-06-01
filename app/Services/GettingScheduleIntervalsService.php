@@ -3,13 +3,13 @@
 namespace App\Services;
 
 use App\Http\Resources\IntervalResource;
-use App\Http\Resources\WorkDayScheduleResource;
-use App\Models\WorkDaySchedule;
+use App\Http\Resources\ScheduleIntervalResource;
+use App\Models\ScheduleInterval;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use JetBrains\PhpStorm\ArrayShape;
 
-class GettingWorkDaySchedulesService
+class GettingScheduleIntervalsService
 {
     private GettingIntervalsService $gettingIntervalsService;
 
@@ -22,33 +22,33 @@ class GettingWorkDaySchedulesService
     }
 
     /**
-     * Searches for work day intervals.
+     * Searches for schedule intervals.
      *
      * @param array $scheduleIds
      * @param string $startDate
      * @param string $endDate
      * @return array
      */
-    #[ArrayShape(['work_day_schedules' => "array", 'intervals' => "array"])]
+    #[ArrayShape(['schedule_intervals' => "array", 'intervals' => "array"])]
     public function search(
         array $scheduleIds,
         string $startDate,
         string $endDate
     ): array
     {
-        $workDaySchedules = $this->getByIdsAndDate($scheduleIds, $startDate, $endDate);
+        $scheduleIntervals = $this->getByIdsAndDate($scheduleIds, $startDate, $endDate);
 
-        $intervalIds = $workDaySchedules->pluck('interval_id')->all();
+        $intervalIds = $scheduleIntervals->pluck('interval_id')->all();
         $intervals = $this->gettingIntervalsService->getIntervalsByIds($intervalIds);
 
         return [
-            'work_day_schedules' => WorkDayScheduleResource::collection($workDaySchedules)->toArray(new Request()),
+            'schedule_intervals' => ScheduleIntervalResource::collection($scheduleIntervals)->toArray(new Request()),
             'intervals' => IntervalResource::collection($intervals->keyBy('id'))->toArray(new Request()),
         ];
     }
 
     /**
-     * Gets work day intervals by requested ids and dates
+     * Gets schedule intervals by requested ids and dates
      *
      * @param array $scheduleIds
      * @param string $startDate
@@ -61,7 +61,7 @@ class GettingWorkDaySchedulesService
         string $endDate
     ): Collection
     {
-        return WorkDaySchedule::query()
+        return ScheduleInterval::query()
             ->select(['id', 'schedule_id', 'date', 'interval_id'])
             ->whereIn('schedule_id', $scheduleIds)
             ->where('date', '>=', $startDate)

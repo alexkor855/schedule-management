@@ -10,7 +10,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class WorkDayScheduleSeeder extends Seeder
+class ScheduleIntervalSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -36,7 +36,7 @@ class WorkDayScheduleSeeder extends Seeder
 
         foreach ($schedules as $schedule) {
 
-            $scheduleWorkDays = array_map(function ($item) use ($schedule, $interval) {
+            $scheduleIntervals = array_map(function ($item) use ($schedule, $interval) {
                 $item['id'] = Str::orderedUuid()->toString();
                 $item['schedule_id'] = $schedule->id;
                 $item['interval_id'] = $interval->id;
@@ -45,7 +45,7 @@ class WorkDayScheduleSeeder extends Seeder
                 $days
             );
 
-            DB::table('work_day_schedules')->insert($scheduleWorkDays);
+            DB::table('schedule_intervals')->insert($scheduleIntervals);
         }
     }
 }

@@ -22,8 +22,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\WorkDaySchedule[] $workDaySchedules
- * @property-read int|null $work_day_schedules_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\ScheduleInterval[] $scheduleIntervals
+ * @property-read int|null $schedule_intervals_count
  * @method static \Database\Factories\ScheduleFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Schedule newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Schedule newQuery()
@@ -46,8 +46,8 @@ class Schedule extends Model
 {
     use HasFactory, Uuids, SoftDeletes;
 
-    public function workDaySchedules(): HasMany
+    public function scheduleIntervals(): HasMany
     {
-        return $this->hasMany(WorkDaySchedule::class, 'schedule_id', 'id');
+        return $this->hasMany(ScheduleInterval::class, 'schedule_id', 'id');
     }
 }

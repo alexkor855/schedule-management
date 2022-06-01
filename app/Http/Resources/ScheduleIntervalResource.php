@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class WorkDayScheduleWithIntervalResource extends JsonResource
+class ScheduleIntervalResource extends JsonResource
 {
     /**
      * Indicates if the resource's collection keys should be preserved.
@@ -26,7 +26,6 @@ class WorkDayScheduleWithIntervalResource extends JsonResource
             'schedule_id' => $this->schedule_id,
             'date' => $this->date,
             'interval_id' => $this->interval_id,
-            'interval' => IntervalResource::make($this->interval)->toArray($request),
         ];
     }
 }
