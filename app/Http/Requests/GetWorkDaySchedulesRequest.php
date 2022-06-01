@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Branch;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class GetWorkDaySchedulesRequest extends FormRequest
 {
@@ -23,10 +25,16 @@ class GetWorkDaySchedulesRequest extends FormRequest
      */
     public function rules()
     {
+        $branchesIds = Branch::query()->select('id')->get()->modelKeys();
+
         return [
-            'branch_id' => ['required', 'uuid'],
-            'employee_id ' => ['uuid'],
-            'workplace_id' => ['uuid'],
+            'schedule_ids.*' => [
+                'required',
+                'uuid',
+                Rule::exists('schedules', 'id')->where(function ($query) use ($branchesIds) {
+                    return $query->whereIn('branch_id', $branchesIds);
+                })
+            ],
             'start_date' => ['required', 'date', 'date_format:Y-m-d'],
             'end_date' => ['required', 'date', 'date_format:Y-m-d', 'after:start_date'],
         ];

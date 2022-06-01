@@ -27,22 +27,19 @@ class CopyWorkDayScheduleRequest extends FormRequest
      */
     public function rules()
     {
-        // $branchesIds = $user->company->branches->modelKeys(); // change after authentication implementation
         $branchesIds = Branch::query()->select('id')->get()->modelKeys();
-
-        $intervalsIds = ScheduleInterval::query()->select(['id'])->get()->modelKeys();
 
         return [
             'from_date' => ['required', 'date', 'date_format:Y-m-d'],
             'to_dates.*' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:'.Carbon::today()->format('Y-m-d')],
-            'schedules.*.schedule_id' => [
+            'workDaySchedules.*.schedule_id' => [
                 'required',
                 'uuid',
                 Rule::exists('schedules', 'id')->where(function ($query) use ($branchesIds) {
                     return $query->whereIn('branch_id', $branchesIds);
                 })
             ],
-            'schedules.*.intervals.*' => ['exists:schedule_intervals,id', Rule::in($intervalsIds)],
+            'workDaySchedules.*.interval_id' => ['required', 'exists:schedule_intervals,id'],
         ];
     }
 }

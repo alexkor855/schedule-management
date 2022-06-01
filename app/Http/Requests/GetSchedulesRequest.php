@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Branch;
 use App\Models\Enums\ScheduleTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -25,11 +26,23 @@ class GetSchedulesRequest extends FormRequest
      */
     public function rules()
     {
+        $branchesIds = Branch::query()->select('id')->get()->modelKeys();
+
         return [
-            //'schedule_type' => ['required', Rule::in(ScheduleTypeEnum::values())],
-            'branch_id' => ['required', 'uuid'],
-            'employee_id ' => ['uuid'],
-            'workplace_id' => ['uuid'],
+            'schedule_type' => ['required', Rule::in(ScheduleTypeEnum::values())],
+            'branch_id' => ['required', 'uuid', Rule::in($branchesIds)],
+            'employee_id ' => [
+                'uuid',
+                Rule::requiredIf(($this->schedule_type === ScheduleTypeEnum::ForEmployeeAndWorkplace->value
+                    && empty($this->workplace_id))
+                ),
+            ],
+            'workplace_id' => [
+                'uuid',
+                Rule::requiredIf(($this->schedule_type === ScheduleTypeEnum::ForEmployeeAndWorkplace->value
+                    && empty($this->employee_id))
+                ),
+            ],
         ];
     }
 }

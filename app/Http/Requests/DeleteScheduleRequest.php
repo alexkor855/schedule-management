@@ -3,12 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Models\Branch;
-use App\Models\ScheduleInterval;
-use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class DeleteSchedulesRequest extends FormRequest
+class DeleteScheduleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,11 +25,10 @@ class DeleteSchedulesRequest extends FormRequest
      */
     public function rules()
     {
-        // $branchesIds = $user->company->branches->modelKeys(); // change after authentication implementation
         $branchesIds = Branch::query()->select('id')->get()->modelKeys();
 
         return [
-            'schedule_ids.*' => [
+            'schedule_id' => [
                 'required',
                 'uuid',
                 Rule::exists('schedules', 'id')->where(function ($query) use ($branchesIds) {

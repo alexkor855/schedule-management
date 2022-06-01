@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Models\Branch;
-use App\Models\ScheduleInterval;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -27,18 +27,19 @@ class DeleteWorkDaySchedulesRequest extends FormRequest
      */
     public function rules()
     {
-        // $branchesIds = $user->company->branches->modelKeys(); // change after authentication implementation
         $branchesIds = Branch::query()->select('id')->get()->modelKeys();
 
         return [
-            'schedule_ids.*' => [
+            'work_day_schedule_ids.*' => [
                 'required',
                 'uuid',
-                Rule::exists('schedules', 'id')->where(function ($query) use ($branchesIds) {
-                    return $query->whereIn('branch_id', $branchesIds);
+                Rule::exists('work_day_schedules', 'id')->where(function (Builder $query) use ($branchesIds) {
+                    $query->where('date', '>=', Carbon::today()->format('Y-m-d'));
+                    $query->whereHas('schedule', function ($query) use ($branchesIds) {
+                        $query->whereIn('branch_id', $branchesIds);
+                    });
                 })
             ],
-            'dates.*' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:'.Carbon::today()->format('Y-m-d')],
         ];
     }
 }

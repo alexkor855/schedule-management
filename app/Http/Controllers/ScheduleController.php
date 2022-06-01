@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\JsonResponseTrait;
+use App\Http\Requests\DeleteScheduleRequest;
 use App\Http\Requests\GetSchedulesRequest;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Http\Requests\UpdateScheduleRequest;
+use App\Http\Resources\ScheduleResource;
 use App\Models\Schedule;
+use App\Services\GettingSchedulesService;
+use App\Services\ScheduleService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class ScheduleController extends Controller
 {
@@ -18,22 +20,31 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  GetSchedulesRequest  $request
+     * @param GetSchedulesRequest $request
+     * @param GettingSchedulesService $schedulesService
      * @return JsonResponse
      */
-    public function index(GetSchedulesRequest $request): JsonResponse
+    public function index(GetSchedulesRequest $request, GettingSchedulesService $schedulesService): JsonResponse
     {
-        try {
-            $response = [];
-        } catch (ValidationException $exception) {
-            $response['message'] = $exception->getMessage();
-            $response['errors'] = $responseHelper->matchErrorFieldsToRequestFields($exception->errors(), []);
-            return $this->getInvalidJsonResponse($response);
-        } catch (\Throwable $exception) {
-            Log::error($exception->getMessage());
-            $response['message'] = 'Непредвиденная ошибка';
-            return $this->getErrorJsonResponse($response);
-        }
+        $schedules = $schedulesService->search(
+            $request->schedule_type,
+            $request->branch_id,
+            $request->employee_id,
+            $request->workplace_id
+        );
+        $response = ScheduleResource::collection($schedules)->toArray($request);
+
+//        try {
+//            $response = [];
+//        } catch (ValidationException $exception) {
+//            $response['message'] = $exception->getMessage();
+//            $response['errors'] = $responseHelper->matchErrorFieldsToRequestFields($exception->errors(), []);
+//            return $this->getInvalidJsonResponse($response);
+//        } catch (\Throwable $exception) {
+//            Log::error($exception->getMessage());
+//            $response['message'] = 'Непредвиденная ошибка';
+//            return $this->getErrorJsonResponse($response);
+//        }
         return $this->getSuccessfulJsonResponse($response);
     }
 
@@ -50,12 +61,15 @@ class ScheduleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreScheduleRequest  $request
-     * @return \Illuminate\Http\Response
+     * @param  StoreScheduleRequest  $request
+     * @param  ScheduleService  $service
+     * @return JsonResponse
      */
-    public function store(StoreScheduleRequest $request)
+    public function store(StoreScheduleRequest $request, ScheduleService $service): JsonResponse
     {
-        //
+        $schedule = $service->create($request);
+        $response = (new ScheduleResource($schedule))->toArray($request);
+        return $this->getSuccessfulJsonResponse($response);
     }
 
     /**
@@ -95,11 +109,13 @@ class ScheduleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Schedule  $schedule
-     * @return \Illuminate\Http\Response
+     * @param  DeleteScheduleRequest  $request
+     * @param  ScheduleService  $service
+     * @return JsonResponse
      */
-    public function destroy(Schedule $schedule)
+    public function destroy(DeleteScheduleRequest $request, ScheduleService $service): JsonResponse
     {
-        //
+        $response = ['success' => $service->delete($request->schedule_id)];
+        return $this->getSuccessfulJsonResponse($response);
     }
 }

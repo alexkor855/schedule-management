@@ -3,9 +3,12 @@
 namespace App\Http\Requests;
 
 use App\Models\Branch;
+use App\Models\WorkDaySchedule;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class UpdateWorkDayScheduleRequest extends FormRequest
 {
@@ -22,25 +25,54 @@ class UpdateWorkDayScheduleRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
+     * @throws ValidationException
      * @return array
      */
     public function rules()
     {
-        // $branchesIds = $user->company->branches->modelKeys(); // change after authentication implementation
         $branchesIds = Branch::query()->select('id')->get()->modelKeys();
 
+        $modelBeforeChange = WorkDaySchedule::query()->whereKey($this->input('id'))->first();
+        if (is_null($modelBeforeChange)) {
+            throw ValidationException::withMessages([
+                'id' => 'Model not found',
+            ]);
+        }
+
         return [
+            'id' => [
+                'required',
+                'uuid',
+                Rule::exists('work_day_schedules', 'id')->where(function (Builder $query) {
+                    return $query->where('date', $this->input('date'));
+                })
+            ],
             'schedule_id' => [
                 'required',
                 'uuid',
-                Rule::exists('schedules', 'id')->where(function ($query) use ($branchesIds) {
+                Rule::exists('schedules', 'id')->where(function (Builder $query) use ($branchesIds) {
                     return $query->whereIn('branch_id', $branchesIds);
+                }),
+                Rule::in([$modelBeforeChange->schedule_id]),
+            ],
+            'date' => [
+                'required',
+                'date',
+                'date_format:Y-m-d',
+                'after_or_equal:'.Carbon::today()->format('Y-m-d'),
+                Rule::in([$modelBeforeChange->date]),
+            ],
+            'interval_id' => ['same:interval.id'],
+            'interval.id' => [
+                'nullable',
+                'uuid',
+                Rule::exists('schedule_intervals', 'id')->where(function (Builder $query) {
+                    $query->where('start_time', $this->input('start_time'));
+                    $query->where('end_time', $this->input('end_time'));
                 })
             ],
-            'date' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:'.Carbon::today()->format('Y-m-d')],
-            'intervals.*.interval_id' => ['nullable', 'exists:schedule_intervals,id'],
-            'intervals.*.start_time' => ['required', 'date_format:H:i'],
-            'intervals.*.end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'interval.start_time' => ['required', 'date_format:H:i'],
+            'interval.end_time' => ['required', 'date_format:H:i', 'after:start_time'],
         ];
     }
 }

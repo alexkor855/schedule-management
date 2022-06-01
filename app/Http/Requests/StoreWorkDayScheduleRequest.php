@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Branch;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +27,6 @@ class StoreWorkDayScheduleRequest extends FormRequest
      */
     public function rules()
     {
-        // $branchesIds = $user->company->branches->modelKeys(); // change after authentication implementation
         $branchesIds = Branch::query()->select('id')->get()->modelKeys();
 
         return [
@@ -38,9 +38,17 @@ class StoreWorkDayScheduleRequest extends FormRequest
                 })
             ],
             'date' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:'.Carbon::today()->format('Y-m-d')],
-            'intervals.*.interval_id' => ['nullable', 'exists:schedule_intervals,id'],
-            'intervals.*.start_time' => ['required', 'date_format:H:i'],
-            'intervals.*.end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'interval_id' => ['same:interval.id'],
+            'interval.id' => [
+                'nullable',
+                'uuid',
+                Rule::exists('schedule_intervals', 'id')->where(function (Builder $query) {
+                    $query->where('start_time', $this->input('start_time'));
+                    $query->where('end_time', $this->input('end_time'));
+                })
+            ],
+            'interval.start_time' => ['required', 'date_format:H:i'],
+            'interval.end_time' => ['required', 'date_format:H:i', 'after:start_time'],
         ];
     }
 }
