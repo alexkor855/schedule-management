@@ -13,15 +13,15 @@ class GettingSchedulesService
      *
      * @param int $scheduleType
      * @param string $branchId
-     * @param string $employeeId
-     * @param string $workplaceId
+     * @param string|null $employeeId
+     * @param string|null $workplaceId
      * @return Collection
      */
     public function search(
         int $scheduleType,
         string $branchId,
-        string $employeeId,
-        string $workplaceId
+        ?string $employeeId,
+        ?string $workplaceId
     ): Collection
     {
         $query = Schedule::query()
@@ -52,7 +52,6 @@ class GettingSchedulesService
                 'employee:id,first_name,last_name,middle_name,gender',
                 'workplace:id,name',
             ])
-            ->get()
-            ->keyBy('id');
+            ->get();
     }
 }

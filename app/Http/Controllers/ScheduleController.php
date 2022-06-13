@@ -8,6 +8,7 @@ use App\Http\Requests\GetSchedulesRequest;
 use App\Http\Requests\StoreScheduleRequest;
 use App\Http\Requests\UpdateScheduleRequest;
 use App\Http\Resources\ScheduleResource;
+use App\Http\Resources\ScheduleResourceWithRelations;
 use App\Models\Schedule;
 use App\Services\GettingSchedulesService;
 use App\Services\ScheduleService;
@@ -32,19 +33,7 @@ class ScheduleController extends Controller
             $request->employee_id,
             $request->workplace_id
         );
-        $response = ScheduleResource::collection($schedules)->toArray($request);
-
-//        try {
-//            $response = [];
-//        } catch (ValidationException $exception) {
-//            $response['message'] = $exception->getMessage();
-//            $response['errors'] = $responseHelper->matchErrorFieldsToRequestFields($exception->errors(), []);
-//            return $this->getInvalidJsonResponse($response);
-//        } catch (\Throwable $exception) {
-//            Log::error($exception->getMessage());
-//            $response['message'] = 'Непредвиденная ошибка';
-//            return $this->getErrorJsonResponse($response);
-//        }
+        $response = ScheduleResourceWithRelations::collection($schedules)->toArray($request);
         return $this->getSuccessfulJsonResponse($response);
     }
 
@@ -69,7 +58,7 @@ class ScheduleController extends Controller
     {
         $schedule = $service->create($request);
         $response = (new ScheduleResource($schedule))->toArray($request);
-        return $this->getSuccessfulJsonResponse($response);
+        return $this->getCreatedJsonResponse($response);
     }
 
     /**

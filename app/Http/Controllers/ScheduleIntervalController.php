@@ -57,7 +57,7 @@ class ScheduleIntervalController extends Controller
     {
         $scheduleInterval = $service->create($request);
         $response = (new ScheduleIntervalWithIntervalResource($scheduleInterval))->toArray($request);
-        return $this->getSuccessfulJsonResponse($response);
+        return $this->getCreatedJsonResponse($response);
     }
 
     /**

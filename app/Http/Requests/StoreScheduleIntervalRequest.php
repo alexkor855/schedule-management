@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Models\Branch;
+use App\Models\Schedule;
+use App\Rules\TimeStep;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +19,7 @@ class StoreScheduleIntervalRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -28,6 +30,10 @@ class StoreScheduleIntervalRequest extends FormRequest
     public function rules()
     {
         $branchesIds = Branch::query()->select('id')->get()->modelKeys();
+        $schedule = Schedule::query()
+            ->select(['id', 'time_step'])
+            ->find($this->input('schedule_id'))
+            ->first();
 
         return [
             'schedule_id' => [
@@ -43,12 +49,12 @@ class StoreScheduleIntervalRequest extends FormRequest
                 'nullable',
                 'uuid',
                 Rule::exists('intervals', 'id')->where(function (Builder $query) {
-                    $query->where('start_time', $this->input('start_time'));
-                    $query->where('end_time', $this->input('end_time'));
+                    $query->where('start_time', $this->input('interval.start_time'));
+                    $query->where('end_time', $this->input('interval.end_time'));
                 })
             ],
-            'interval.start_time' => ['required', 'date_format:H:i'],
-            'interval.end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'interval.start_time' => ['required', 'date_format:H:i', new TimeStep($schedule->time_step)],
+            'interval.end_time' => ['required', 'date_format:H:i', 'after:interval.start_time', new TimeStep($schedule->time_step)],
         ];
     }
 }

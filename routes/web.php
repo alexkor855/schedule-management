@@ -16,3 +16,14 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+//Route::group(['middleware' => 'auth'], function () {
+//
+//});
+
+Route::resource('/schedule', \App\Http\Controllers\ScheduleController::class)
+    ->only(['index', 'store']);
+Route::delete('/schedule', [\App\Http\Controllers\ScheduleController::class, 'destroy']);
+
+Route::resource('/schedule-interval', \App\Http\Controllers\ScheduleIntervalController::class)
+    ->only(['index', 'store']);

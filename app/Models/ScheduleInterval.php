@@ -12,8 +12,19 @@ class ScheduleInterval extends Model
 {
     use HasFactory, Uuids, SoftDeletes;
 
+    protected $fillable = [
+        'schedule_id',
+        'date',
+        'interval_id',
+    ];
+
     public function schedule(): BelongsTo
     {
         return $this->belongsTo(Schedule::class, 'schedule_id', 'id');
+    }
+
+    public function interval(): BelongsTo
+    {
+        return $this->belongsTo(Interval::class, 'interval_id', 'id');
     }
 }

@@ -36,6 +36,17 @@ trait JsonResponseTrait
     }
 
     /**
+     * Returns a created response, code 200
+     *
+     * @param array|Collection|EloquentCollection $data
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCreatedJsonResponse($data): JsonResponse
+    {
+        return $this->getJsonResponse($data, Response::HTTP_CREATED);
+    }
+
+    /**
      * Returns a response with a server error, code 500
      *
      * @param array|Collection|EloquentCollection $data

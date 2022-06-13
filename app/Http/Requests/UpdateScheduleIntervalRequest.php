@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Branch;
 use App\Models\ScheduleInterval;
+use App\Rules\TimeStep;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
@@ -19,7 +20,7 @@ class UpdateScheduleIntervalRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -32,7 +33,11 @@ class UpdateScheduleIntervalRequest extends FormRequest
     {
         $branchesIds = Branch::query()->select('id')->get()->modelKeys();
 
-        $modelBeforeChange = ScheduleInterval::query()->whereKey($this->input('id'))->first();
+        $modelBeforeChange = ScheduleInterval::query()
+            ->with(['schedule:id,time_step'])
+            ->whereKey($this->input('id'))
+            ->first();
+
         if (is_null($modelBeforeChange)) {
             throw ValidationException::withMessages([
                 'id' => 'Model not found',
@@ -40,13 +45,7 @@ class UpdateScheduleIntervalRequest extends FormRequest
         }
 
         return [
-            'id' => [
-                'required',
-                'uuid',
-                Rule::exists('schedule_intervals', 'id')->where(function (Builder $query) {
-                    return $query->where('date', $this->input('date'));
-                })
-            ],
+            'id' => ['required', 'uuid'],
             'schedule_id' => [
                 'required',
                 'uuid',
@@ -71,8 +70,17 @@ class UpdateScheduleIntervalRequest extends FormRequest
                     $query->where('end_time', $this->input('end_time'));
                 })
             ],
-            'interval.start_time' => ['required', 'date_format:H:i'],
-            'interval.end_time' => ['required', 'date_format:H:i', 'after:start_time'],
+            'interval.start_time' => [
+                'required',
+                'date_format:H:i',
+                new TimeStep($modelBeforeChange->schedule->time_step)
+            ],
+            'interval.end_time' => [
+                'required',
+                'date_format:H:i',
+                'after:start_time',
+                new TimeStep($modelBeforeChange->schedule->time_step)
+            ],
         ];
     }
 }

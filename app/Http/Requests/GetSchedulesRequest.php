@@ -32,12 +32,14 @@ class GetSchedulesRequest extends FormRequest
             'schedule_type' => ['required', Rule::in(ScheduleTypeEnum::values())],
             'branch_id' => ['required', 'uuid', Rule::in($branchesIds)],
             'employee_id ' => [
+                'nullable',
                 'uuid',
                 Rule::requiredIf(($this->schedule_type === ScheduleTypeEnum::ForEmployeeAndWorkplace->value
                     && empty($this->workplace_id))
                 ),
             ],
             'workplace_id' => [
+                'nullable',
                 'uuid',
                 Rule::requiredIf(($this->schedule_type === ScheduleTypeEnum::ForEmployeeAndWorkplace->value
                     && empty($this->employee_id))

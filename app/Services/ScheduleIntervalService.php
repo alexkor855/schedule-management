@@ -16,11 +16,14 @@ class ScheduleIntervalService
      * Store a newly created resource in storage.
      *
      * @param StoreScheduleIntervalRequest $request
-     * @return Schedule
+     * @return ScheduleInterval
      */
-    public function create(StoreScheduleIntervalRequest $request): Schedule
+    public function create(StoreScheduleIntervalRequest $request): ScheduleInterval
     {
         $intervalData = $request->validated('interval');
+        if (empty($intervalData['id'])) {
+            unset($intervalData['id']);
+        }
         $interval = Interval::query()->firstOrCreate($intervalData);
 
         $data = $request->validated();
@@ -28,9 +31,9 @@ class ScheduleIntervalService
             $data['interval_id'] = $interval->id;
         }
 
-        /** @var Schedule $schedule */
-        $schedule = Schedule::query()->create($data);
-        return $schedule;
+        /** @var ScheduleInterval $scheduleInterval */
+        $scheduleInterval = ScheduleInterval::query()->create($data);
+        return $scheduleInterval;
     }
 
     /**
@@ -39,20 +42,22 @@ class ScheduleIntervalService
      * @param UpdateScheduleIntervalRequest $request
      * @return Schedule
      */
-    public function update(UpdateScheduleIntervalRequest $request): Schedule
+    public function update(UpdateScheduleIntervalRequest $request): ScheduleInterval
     {
         $intervalData = $request->validated('interval');
         $interval = Interval::query()->firstOrCreate($intervalData);
 
         $data = $request->validated();
-        $schedule = Schedule::query()->find($data['id']);
+
+        /** @var ScheduleInterval $scheduleInterval */
+        $scheduleInterval = ScheduleInterval::query()->find($data['id']);
 
         if (is_null($data['interval_id'])) {
-            $schedule->interval_id = $interval->id;
-            $schedule->save();
+            $scheduleInterval->interval_id = $interval->id;
+            $scheduleInterval->save();
         }
 
-        return $schedule;
+        return $scheduleInterval;
     }
 
     /**

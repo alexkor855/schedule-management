@@ -21,9 +21,10 @@ class ScheduleSeeder extends Seeder
         $branches = Branch::query()
             ->select(['id', 'appointment_scheme'])
             ->with([
-                'serviceWorkplaces:id,branch_id,service_id,workplace_id',
-                'serviceEmployees:id,branch_id,service_id,employee_id',
+                'branchEmployees:branch_id,employee_id',
+                'workplaces:id,branch_id',
             ])
+            ->orderBy('id')
             ->get();
 
         foreach ($branches as $branch) {
@@ -37,38 +38,47 @@ class ScheduleSeeder extends Seeder
             if (in_array($branch->appointment_scheme, AppointmentSchemeEnum::schemesWithWorkplace()) &&
                 in_array($branch->appointment_scheme, AppointmentSchemeEnum::schemesWithEmployee())
             ) {
-                foreach ($branch->serviceWorkplaces as $serviceWorkplace) {
-                    $serviceEmployees = $branch->serviceEmployees
-                        ->where('service_id', $serviceWorkplace->service_id)->all();
-
-                    foreach ($serviceEmployees as $serviceEmployee) {
+                foreach ($branch->workplaces as $workplaceNumber => $workplace) {
+                    if ($workplaceNumber % 2 === 1) {
+                        continue;
+                    }
+                    foreach ($branch->branchEmployees as $employeeNumber => $branchEmployee) {
+                        if ($employeeNumber % 2 === 1) {
+                            continue;
+                        }
                         Schedule::factory()
                             ->create([
                                 'schedule_type' => ScheduleTypeEnum::ForEmployeeAndWorkplace->value,
                                 'branch_id' => $branch->id,
-                                'workplace_id' => $serviceWorkplace->workplace_id,
-                                'employee_id' => $serviceEmployee->employee_id,
+                                'workplace_id' => $workplace->id,
+                                'employee_id' => $branchEmployee->employee_id,
                                 'time_step' => 15,
                             ]);
                     }
                 }
             } elseif (in_array($branch->appointment_scheme, AppointmentSchemeEnum::schemesWithEmployee())) {
-                foreach ($branch->serviceEmployees as $serviceEmployee) {
+                foreach ($branch->branchEmployees as $employeeNumber => $branchEmployee) {
+                    if ($employeeNumber % 2 === 1) {
+                        continue;
+                    }
                     Schedule::factory()
                         ->create([
                             'schedule_type' => ScheduleTypeEnum::ForEmployee->value,
                             'branch_id' => $branch->id,
-                            'employee_id' => $serviceEmployee->employee_id,
+                            'employee_id' => $branchEmployee->employee_id,
                             'time_step' => 15,
                         ]);
                 }
             } elseif (in_array($branch->appointment_scheme, AppointmentSchemeEnum::schemesWithWorkplace())) {
-                foreach ($branch->serviceWorkplaces as $serviceWorkplace) {
+                foreach ($branch->workplaces as $workplaceNumber => $workplace) {
+                    if ($workplaceNumber % 2 === 1) {
+                        continue;
+                    }
                     Schedule::factory()
                         ->create([
                             'schedule_type' => ScheduleTypeEnum::ForWorkplace->value,
                             'branch_id' => $branch->id,
-                            'workplace_id' => $serviceWorkplace->workplace_id,
+                            'workplace_id' => $workplace->id,
                             'time_step' => 15,
                         ]);
                 }

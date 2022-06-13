@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique('name', 'deleted_at');
+            $table->unique(['name', 'deleted_at']);
         });
 
         Schema::create('cities', function (Blueprint $table) {
@@ -207,10 +207,20 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['branch_id', 'employee_id', 'workplace_id', 'deleted_at']);
             $table->index('workplace_id');
             $table->index('employee_id');
         });
+
+        DB::statement("
+            CREATE UNIQUE INDEX
+            schedules_branch_id_employee_id_workplace_id_deleted_at_unique
+            ON schedules
+            USING btree(
+                branch_id,
+                COALESCE(employee_id, '00000000-0000-0000-0000-000000000000'),
+                COALESCE(workplace_id, '00000000-0000-0000-0000-000000000000'),
+                COALESCE(deleted_at, '2000-01-01 00:00:00')
+            )");
 
         Schema::create('intervals', function (Blueprint $table) {
             $table->uuid('id')->primary();

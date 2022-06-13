@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -46,8 +47,32 @@ class Schedule extends Model
 {
     use HasFactory, Uuids, SoftDeletes;
 
+    protected $fillable = [
+        'schedule_type',
+        'branch_id',
+        'employee_id',
+        'workplace_id',
+        'time_step',
+        'number_available_days',
+    ];
+
     public function scheduleIntervals(): HasMany
     {
         return $this->hasMany(ScheduleInterval::class, 'schedule_id', 'id');
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'branch_id', 'id');
+    }
+
+    public function employee(): BelongsTo
+    {
+        return $this->belongsTo(Employee::class, 'employee_id', 'id');
+    }
+
+    public function workplace(): BelongsTo
+    {
+        return $this->belongsTo(Workplace::class, 'workplace_id', 'id');
     }
 }

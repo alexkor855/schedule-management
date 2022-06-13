@@ -36,4 +36,9 @@ class Branch extends Model
     {
         return $this->hasMany(ServiceEmployee::class, 'branch_id', 'id');
     }
+
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class, 'branch_id', 'id');
+    }
 }
